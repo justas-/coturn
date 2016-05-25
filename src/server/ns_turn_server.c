@@ -3513,6 +3513,8 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 	if (stun_is_request_str(ioa_network_buffer_data(in_buffer->nbh), 
 				ioa_network_buffer_get_size(in_buffer->nbh))) {
 
+		// STUN Method has request/response semantics
+
 		if((method == STUN_METHOD_BINDING) && (*(server->no_stun))) {
 
 			no_response = 1;
@@ -3787,6 +3789,7 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 	} else if (stun_is_indication_str(ioa_network_buffer_data(in_buffer->nbh), 
 					  ioa_network_buffer_get_size(in_buffer->nbh))) {
 
+		// STUN Method has Indication semantics
 		no_response = 1;
 		int postpone = 0;
 
@@ -4450,6 +4453,7 @@ static int read_client_connection(turn_turnserver *server,
 					&blen,
 					&chnum,
 					is_padding_mandatory)) {
+		// [RFC5766] Chapter 11. Channels
 
 		if(ss->is_tcp_relay) {
 			//Forbidden
@@ -4474,6 +4478,7 @@ static int read_client_connection(turn_turnserver *server,
 
 	} else if (stun_is_command_message_full_check_str(ioa_network_buffer_data(in_buffer->nbh), ioa_network_buffer_get_size(in_buffer->nbh), 0, &(ss->enforce_fingerprints))) {
 
+		// We have a valid STUN/TURN command
 		ioa_network_buffer_handle nbh = ioa_network_buffer_allocate(server->e);
 		int resp_constructed = 0;
 
